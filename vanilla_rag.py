@@ -11,6 +11,10 @@ from qdrant_client.http.models import Distance, VectorParams
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
+from langchain_community.document_loaders import PyMuPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.schema import Document
+
 
 LOCATION = ":memory:"
 VECTOR_SIZE = 1536
@@ -28,11 +32,28 @@ Context:
 {context}
 """
 
-# Function to do vanilla RAG on a bunch of text strings that are already chunked
-async def vanilla_rag(texts:list[Document], openai_key:str, collection_name:str="PMarca Blogs"):
+async def load_and_chunk_pdf(pdf:str, chunk_size:int, chunk_overlap:int) -> list[str]:
+    """Load a pdf file, combine it into one doc, split it, and return the chunks"""
+    print(f"Loading {pdf}...")
+    pages = await PyMuPDFLoader(file_path=pdf).aload()
 
-    qdrant_client = QdrantClient(location=LOCATION) 
-    qdrant_client.create_collection(
+    print("Chunking...")
+    combined_text = "\n".join([doc.page_content for doc in pages])
+    combined_document = Document(page_content=combined_text)
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap
+    )
+
+    # Split the combined document
+    return await text_splitter.atransform_documents([combined_document])
+
+# Function to do vanilla RAG on a bunch of text strings that are already chunked
+async def vanilla_rag_chain(texts:list[Document], openai_key:str, collection_name:str):
+
+    qdrant_client = AsyncQdrantClient(location=LOCATION) 
+    await qdrant_client.create_collection(
         collection_name=collection_name,
         vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
     )
