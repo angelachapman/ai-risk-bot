@@ -18,14 +18,16 @@ from langchain.schema import Document
 
 LOCATION = ":memory:"
 VECTOR_SIZE = 1536
-EMBEDDING_MODEL = "text-embedding-ada-002"
-CHAT_MODEL = "gpt-4o-mini"
+
 
 SYSTEM_PROMPT_TEMPLATE = """
-You are a helpful expert. Answer user questions based only on the context below. 
-If you don't know, say nah.
+You are a helpful, kind expert in AI safety and risk mitigation. You can answer highly technical
+questions, but you also know how to give big-picture answers that laypeople can understand.
+Answer user questions based only on the context below. Answer in at least a paragraph and provide lots of
+details, but avoid too much jargon.
+If you don't know, or if the context is not relevant, just apologize and say "I don't know".
 
-Question:
+User question:
 {input}
 
 Context:
@@ -35,7 +37,7 @@ Context:
 async def load_and_chunk_pdf(pdf:str, chunk_size:int, chunk_overlap:int) -> list[str]:
     """Load a pdf file, combine it into one doc, split it, and return the chunks"""
     print(f"Loading {pdf}...")
-    pages = await PyMuPDFLoader(file_path=pdf).aload()
+    pages = PyMuPDFLoader(file_path=pdf).load() # aload available in Langchain 0.3
 
     print("Chunking...")
     combined_text = "\n".join([doc.page_content for doc in pages])
@@ -50,16 +52,22 @@ async def load_and_chunk_pdf(pdf:str, chunk_size:int, chunk_overlap:int) -> list
     return await text_splitter.atransform_documents([combined_document])
 
 # Function to do vanilla RAG on a bunch of text strings that are already chunked
-async def vanilla_rag_chain(texts:list[Document], openai_key:str, collection_name:str):
+async def vanilla_openai_rag_chain( texts:list[Document], 
+                            openai_key:str, 
+                            embedding_model:str, 
+                            chat_model:str, 
+                            collection_name:str="default" ):
 
-    qdrant_client = AsyncQdrantClient(location=LOCATION) 
-    await qdrant_client.create_collection(
+    qdrant_client = QdrantClient(location=LOCATION) 
+    qdrant_client.create_collection(
         collection_name=collection_name,
         vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
     )
     print('created qdrant client')
 
-    embeddings = OpenAIEmbeddings( model=EMBEDDING_MODEL)
+    embeddings = OpenAIEmbeddings( model=embedding_model )
+    print('created embeddings')
+    
     qdrant_vector_store = QdrantVectorStore(
         client=qdrant_client,
         collection_name=collection_name,
@@ -70,7 +78,7 @@ async def vanilla_rag_chain(texts:list[Document], openai_key:str, collection_nam
     print('populated vector db')
 
     prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLATE)
-    primary_qa_llm = ChatOpenAI(model_name=CHAT_MODEL, temperature=0)
+    primary_qa_llm = ChatOpenAI(model_name=chat_model, temperature=0)
 
     retrieval_augmented_qa_chain = (
         {"context": itemgetter("input") | retriever, "input": itemgetter("input")}
