@@ -1,11 +1,5 @@
-langchain
-langchain
-langchain_core
-langchain_community
-pymupdf
-openai
-langchain_openai
+langchain==0.2.16
 langchain-qdrant
-qdrant_client
-asyncio
-chainlit
+langchain-text-splitters
+langchain-openai==0.1.23
+chainlit==0.7.700

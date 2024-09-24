@@ -25,7 +25,6 @@ logging.basicConfig(level=logging.INFO)
 # Import your fancy_rag_chain function
 from vars import CHILD_CHUNK_SIZE, CHILD_OVERLAP, GPT_4O, LOCATION, SYSTEM_PROMPT_TEMPLATE, TE3_LARGE, TE3_VECTOR_LENGTH
 
-
 # Initialize ChatOpenAI
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 if not openai_api_key:
@@ -39,6 +38,7 @@ def init_retriever ():
         return [Document(**doc) for doc in data]
 
     docs = read_docs_from_file("chunked_docs.json")
+    print(f"read {len(docs)} docs")
 
     # Qdrant client and vectorstore
     qdrant_client = QdrantClient(location=LOCATION) 
@@ -52,7 +52,7 @@ def init_retriever ():
         collection_name="my_collection",
         embedding=OpenAIEmbeddings(model=TE3_LARGE),
     )
-
+    print("created QDrant vector store")
     # Create the new retriever
     child_splitter = RecursiveCharacterTextSplitter(chunk_size=CHILD_CHUNK_SIZE, chunk_overlap=CHILD_OVERLAP)
     parentdoc_retriever = ParentDocumentRetriever(
@@ -66,10 +66,18 @@ def init_retriever ():
 @cl.on_chat_start
 async def start():    
     # Initialize the RAG chain
-    parentdoc_retriever, docs = init_retriever()
+    try:
+        parentdoc_retriever, docs = init_retriever()
+    except Exception as e:
+        print(f"error constructing retriever: {e}")
 
     print('adding docs to vector db')
-    await parentdoc_retriever.aadd_documents(docs)
+    await cl.Message(content="Just a moment while I initialize my knowledge base..",disable_human_feedback=True).send()
+    try:
+        await parentdoc_retriever.aadd_documents(docs)
+    except Exception as e:
+        print(f"error adding documents to vector DB")
+
     print('populated vector db')
 
     prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLATE)
