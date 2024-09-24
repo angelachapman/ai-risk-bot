@@ -1,9 +1,4 @@
-"""from ragas.metrics import (
-    faithfulness,
-    answer_relevancy,
-    context_precision,
-    context_recall
-)"""
+
 
 # Qdrant constants
 LOCATION = ":memory:"
@@ -65,7 +60,6 @@ CRITIC_LLM = "gpt-4o-2024-08-06"
 EVALUATION_MODEL = GENERATOR_LLM
 N_EVAL_QUESTIONS = 30 # IRL, we'd want more, and maybe a test and validation set. But set it low to accommodate low rate limits.
 TEST_DATASET_FILE = f"test_dataset_{N_EVAL_QUESTIONS}.csv"
-#RAGAS_METRICS = [ faithfulness, answer_relevancy, context_precision, context_recall ]
 
 
 # Fine tuning constants
