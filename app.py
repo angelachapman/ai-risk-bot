@@ -63,11 +63,11 @@ def init_retriever ():
     print("created retriever")
     return parentdoc_retriever,docs
 
-parentdoc_retriever, docs = init_retriever()
-
 @cl.on_chat_start
 async def start():    
     # Initialize the RAG chain
+    parentdoc_retriever, docs = init_retriever()
+
     print('adding docs to vector db')
     await parentdoc_retriever.aadd_documents(docs)
     print('populated vector db')
