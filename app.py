@@ -23,7 +23,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Import your fancy_rag_chain function
-from vars import CHILD_CHUNK_SIZE, CHILD_OVERLAP, GPT_4O, LOCATION, SYSTEM_PROMPT_TEMPLATE, TE3_LARGE, TE3_VECTOR_LENGTH
+from vars import CHILD_CHUNK_SIZE, CHILD_OVERLAP, GPT_4O, LOCATION, SYSTEM_PROMPT_TEMPLATE_CL_APP, TE3_LARGE, TE3_VECTOR_LENGTH
 
 # Initialize ChatOpenAI
 openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -80,7 +80,7 @@ async def start():
 
     print('populated vector db')
 
-    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLATE)
+    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLAT_CL_APP)
     primary_qa_llm = ChatOpenAI(model_name=GPT_4O, temperature=0, streaming=True)
 
     rag_chain = (
