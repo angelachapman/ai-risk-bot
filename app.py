@@ -80,7 +80,7 @@ async def start():
 
     print('populated vector db')
 
-    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLAT_CL_APP)
+    prompt = ChatPromptTemplate.from_template(SYSTEM_PROMPT_TEMPLATE_CL_APP)
     primary_qa_llm = ChatOpenAI(model_name=GPT_4O, temperature=0, streaming=True)
 
     rag_chain = (
