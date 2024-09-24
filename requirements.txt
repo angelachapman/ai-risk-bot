@@ -7,4 +7,4 @@ langchain_openai==0.1.23
 langchain-qdrant 
 qdrant_client 
 asyncio 
-chainlit
+chainlit==0.7.700
