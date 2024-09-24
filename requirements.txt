@@ -10,6 +10,4 @@ qdrant_client
 asyncio 
 ragas==0.1.14 
 pandas
-transformers 
-sentence-transformers 
 chainlit
