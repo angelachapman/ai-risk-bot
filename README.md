@@ -1,2 +1,9 @@
-# AI RiskBot
-Toy chatbot that discusses the risks &amp; regulations around AI
+---
+title: AIRiskBot!
+emoji: 🔍
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+license: mit
+---
