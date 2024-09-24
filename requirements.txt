@@ -11,3 +11,4 @@ chainlit==0.7.700
 
 marshmallow==3.22.0
 jsonpointer==3.0.0
+idna==3.10
