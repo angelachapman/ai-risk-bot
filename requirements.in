@@ -1,0 +1,11 @@
+langchain
+langchain
+langchain_core
+langchain_community
+pymupdf
+openai
+langchain_openai
+langchain-qdrant
+qdrant_client
+asyncio
+chainlit
