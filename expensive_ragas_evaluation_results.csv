@@ -1,8 +1,0 @@
-scores,dataset,binary_columns,cost_cb
-"Dataset({
-    features: ['faithfulness', 'answer_relevancy', 'context_precision', 'context_recall'],
-    num_rows: 30
-})","Dataset({
-    features: ['question', 'answer', 'contexts', 'ground_truth'],
-    num_rows: 30
-})",[],
