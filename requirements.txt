@@ -4,10 +4,7 @@ langchain_community==0.2.16
 pymupdf 
 openai 
 langchain_openai==0.1.23 
-langchain_huggingface==0.0.3
 langchain-qdrant 
 qdrant_client 
 asyncio 
-ragas==0.1.14 
-pandas
 chainlit

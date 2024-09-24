@@ -3,18 +3,16 @@ import os
 from typing import cast
 import json
 
+import chainlit as cl
+
 from langchain_qdrant import QdrantVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
-import chainlit as cl
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.document_loaders import PyMuPDFLoader
 from qdrant_client.http.models import Distance, VectorParams
 from langchain.retrievers import ParentDocumentRetriever
 from langchain.storage import InMemoryStore
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from langchain.chains import LLMChain
 from langchain.schema.runnable import Runnable
 from langchain.schema.runnable.config import RunnableConfig
 from langchain_core.runnables import RunnablePassthrough
@@ -25,8 +23,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Import your fancy_rag_chain function
-from vars import CHILD_CHUNK_SIZE, CHILD_OVERLAP, GPT_4O, HF_VECTOR_SIZE, LOCATION, PDF_DICT, SYSTEM_PROMPT_TEMPLATE, TE3_LARGE, TE3_VECTOR_LENGTH
-from vars import HF_USERNAME, FT_MODEL_NAME
+from vars import CHILD_CHUNK_SIZE, CHILD_OVERLAP, GPT_4O, LOCATION, SYSTEM_PROMPT_TEMPLATE, TE3_LARGE, TE3_VECTOR_LENGTH
+
 
 # Initialize ChatOpenAI
 openai_api_key = os.environ.get("OPENAI_API_KEY")
